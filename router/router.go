@@ -78,11 +78,11 @@ func Load(mux *httptreemux.ContextMux, middleware ...gin.HandlerFunc) http.Handl
 		repo.GET("/files/:number/:proc/*file", server.FileGet)
 
 		// requires push permissions
-		repo.GET("/secrets", session.MustPush, server.GetSecretList)
-		repo.POST("/secrets", session.MustPush, server.PostSecret)
-		repo.GET("/secrets/:secret", session.MustPush, server.GetSecret)
-		repo.PATCH("/secrets/:secret", session.MustPush, server.PatchSecret)
-		repo.DELETE("/secrets/:secret", session.MustPush, server.DeleteSecret)
+		repo.GET("/secrets", session.MustRepoAdmin(), server.GetSecretList)
+		repo.POST("/secrets", session.MustRepoAdmin(), server.PostSecret)
+		repo.GET("/secrets/:secret", session.MustRepoAdmin(), server.GetSecret)
+		repo.PATCH("/secrets/:secret", session.MustRepoAdmin(), server.PatchSecret)
+		repo.DELETE("/secrets/:secret", session.MustRepoAdmin(), server.DeleteSecret)
 
 		// requires push permissions
 		repo.GET("/registry", session.MustPush, server.GetRegistryList)
@@ -100,8 +100,8 @@ func Load(mux *httptreemux.ContextMux, middleware ...gin.HandlerFunc) http.Handl
 
 		repo.POST("/builds/:number", session.MustPush, server.PostBuild)
 		repo.DELETE("/builds/:number", session.MustAdmin(), server.ZombieKill)
-		repo.POST("/builds/:number/approve", session.MustPush, server.PostApproval)
-		repo.POST("/builds/:number/decline", session.MustPush, server.PostDecline)
+		repo.POST("/builds/:number/approve", session.MustRepoAdmin(), server.PostApproval)
+		repo.POST("/builds/:number/decline", session.MustRepoAdmin(), server.PostDecline)
 		repo.DELETE("/builds/:number/:job", session.MustPush, server.DeleteBuild)
 	}
 
