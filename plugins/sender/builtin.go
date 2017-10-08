@@ -17,8 +17,8 @@ func New(store model.SenderStore, conf model.ConfigStore) model.SenderService {
 func (b *builtin) SenderAllowed(user *model.User, repo *model.Repo, build *model.Build, conf *model.Config) (bool, error) {
 	if build.Sender != user.Login {
 		// check to see if the configuration has already been used in an
-		// existing build. If yes it is considered approved.
-		if ok, _ := b.conf.ConfigFindApproved(conf); ok {
+		// existing build. If yes (and the build is not a deployment) it is considered approved.
+		if ok, _ := b.conf.ConfigFindApproved(conf); ok && build.Event != model.EventDeploy {
 			return true, nil
 		}
 		// else check to see if the configuration is sent from a user
